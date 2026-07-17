@@ -2255,29 +2255,22 @@
     wrap.hidden = false;
     compose.disabled = false; copy.disabled = false;
     const off = resolveOfficials(state.reps, c.id);
-    const matchedSet = new Set(
-      off.county.concat(off.city).map(m => m.email).filter(Boolean)
-    );
+    const matchedSet = new Set(off.county.concat(off.city).map(m => m.email).filter(Boolean));
     const roster = state.reps.roster;
     const shown = [];
-    const push = (bodyKey) => {
-      const members = ((roster[bodyKey] || {}).members) || [];
-      members.forEach(m => shown.push(m));
-      return members;
-    };
-    renderRecipientGroup(box, 'Escambia County Commission', push('county_commission'), matchedSet);
-    renderRecipientGroup(box, 'Pensacola City Council', push('city_council'), matchedSet);
-    renderRecipientGroup(box, 'FDOT District 3 (state roads)', push('fdot_district_3'), matchedSet);
+    [['Escambia County Commission', 'county_commission'],
+     ['Pensacola City Council', 'city_council'],
+     ['FDOT District 3 (state roads)', 'fdot_district_3']].forEach(([title, key]) => {
+      const members = ((roster[key] || {}).members) || [];
+      shown.push.apply(shown, members);
+      renderRecipientGroup(box, title, members, matchedSet);
+    });
 
     unverified.hidden = !anyUnverified(shown);
-
-    if (off.matched){
-      note.hidden = false;
-      note.textContent = 'Pre-checked recipients are the officials whose districts this street runs through. Add or remove any before sending.';
-    } else {
-      note.hidden = false;
-      note.textContent = 'We could not automatically match this street to specific districts yet (the corridor→district map is not populated). Choose the officials who represent this street before sending.';
-    }
+    note.hidden = false;
+    note.textContent = off.matched
+      ? 'Pre-checked recipients are the officials whose districts this street runs through. Add or remove any before sending.'
+      : 'We could not automatically match this street to specific districts yet (the corridor→district map is not populated). Choose the officials who represent this street before sending.';
   }
 
   (function wireEmailGenerator(){

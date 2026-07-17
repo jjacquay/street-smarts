@@ -29,29 +29,19 @@ python3 -m http.server 5173
 
 The repo is **Vercel-ready** — `vercel.json` carries the full static config
 (`cleanUrls`, security headers + CSP, and the GeoJSON content-type for
-`/data/*`) — but connecting it to Vercel is an account-side step that has not
-been done yet.
+`/data/*`), so there is no build step and no repo changes are needed to deploy.
 
-**Deploy V2 as its own new Vercel project.** The `safer-streets-simplified`
-domain belongs to Safer Streets **V1**, so V2 must be a *separate* project with a
-distinct domain. Name the new project e.g. `safer-streets-simplified-v2`, which
-gives the default domain **https://safer-streets-simplified-v2.vercel.app**
-(Vercel's domain follows the project name — if you choose a different name,
-update the URL above and in this file).
+**Deploy V2 as its own new Vercel project** (the `safer-streets-simplified`
+domain belongs to Safer Streets **V1**). In the Vercel dashboard: **Add New →
+Project → import this repo**, and:
 
-Pick **one** of two ways to deploy (using both causes double deploys):
+- **Project Name:** `safer-streets-simplified-v2` — gives the domain
+  **https://safer-streets-simplified-v2.vercel.app**. A different name changes
+  the domain; update the URL here if so.
+- **Framework preset:** Other · **Build command:** (none) · **Root directory:** `.`
 
-1. **Vercel Git Integration (recommended).** In the Vercel dashboard: Add New →
-   Project → import this repo, and **name the project distinctly (e.g.
-   `safer-streets-simplified-v2`) so it does not collide with V1**. Framework
-   preset **Other (Static HTML)**, Build command **(none)**, Output directory
-   **`.`**. Every push to `main` then deploys to production and every PR gets a
-   preview URL. No repo changes needed.
-2. **GitHub Actions (`.github/workflows/deploy-vercel.yml`).** Deploys to
-   production after CI passes on `main`. Inert until you add three repo secrets
-   (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`) under Settings →
-   Secrets and variables → Actions. Delete the file if you use Git Integration
-   instead.
+Vercel's Git Integration then deploys every push to `main` to production and
+gives each PR a preview URL.
 
 ## Accessibility
 
