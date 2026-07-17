@@ -167,6 +167,13 @@ def test_choose():
     check(chosen is copy_b and "identical copies" in chosen.get("note", ""),
           "choose: identical copies collapse to deterministic pick")
 
+    # ...and "test"-named service URLs lose the tie even when alphabetically
+    # first — the chosen URL is recorded as provenance and test services vanish.
+    copy_test = cand("https://maps.cityofpensacola.com/Avenion/AvenionTest/MapServer/34", True)
+    copy_prod = cand("https://maps.cityofpensacola.com/Avineon_MIL1/MapServer/34", True)
+    chosen, reason = F.choose([copy_test, copy_prod])
+    check(chosen is copy_prod, "choose: test-named copy loses the tie to a production URL")
+
     # Genuinely different data (different district sets) still aborts.
     diff = cand("https://maps.cityofpensacola.com/c/MapServer/9", True, districts=(1, 2, 3, 4, 5, 1, 2))
     chosen, reason = F.choose([copy_a, diff])
