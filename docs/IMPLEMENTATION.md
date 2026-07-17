@@ -39,6 +39,16 @@ sequence without a manual.
 - [x] No horizontal scroll at 320px width (verified in headless Chromium)
 - [x] Corridor selection is keyboard-operable via the ranked list of buttons (the map itself is mouse/touch click)
 
+## CI as the network probe
+
+The dev sandbox has no outbound internet beyond package registries (government
+and GIS hosts 403 at the proxy), but GitHub-hosted runners do. Anything that
+needs the open web — the rep-email scan, district-boundary discovery, the data
+refresh — therefore runs as a workflow. The scan and discovery workflows also
+trigger on PRs that touch their own scripts, in **report-only probe mode**
+(artifact + step summary, no writes, no PR), so a change pushed from the sandbox
+gets real-network results minutes later without merging first.
+
 ## Backlog (post-MVP)
 
 - **In-app email generator (built).** Lives in the Packet builder section of

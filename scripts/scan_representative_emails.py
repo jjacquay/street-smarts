@@ -37,19 +37,21 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REPS = ROOT / "data" / "representatives.json"
 
-# Official directory pages, keyed by the roster body they back. URLs are the best
-# public guess; confirm/adjust when the real layer/page is known. `domain` is the
-# only address space we trust from each source.
+# Official directory pages, keyed by the roster body they back (confirmed real
+# pages, 2026-07-17 — the county one shows emails in plain text; the city one
+# renders them as "Email Council <name>" links, so extraction may find nothing
+# there if the address only lives behind a form). `domain` is the only address
+# space we trust from each source.
 SOURCES = {
     "county_commission": {
         "label": "Escambia County Commission",
         "domain": "myescambia.com",
-        "url": "https://myescambia.com/our-services/board-of-county-commissioners",
+        "url": "https://myescambia.com/open-government/elected-officials",
     },
     "city_council": {
         "label": "Pensacola City Council",
         "domain": "cityofpensacola.com",
-        "url": "https://www.cityofpensacola.com/95/City-Council",
+        "url": "https://www.cityofpensacola.com/directory.aspx?did=7",
     },
 }
 

@@ -1,40 +1,41 @@
 {
   "_meta": {
-    "note": "UNVERIFIED CONTACT DATA — do not treat as launch-ready. Every email below was transcribed from a Google AI Overview screenshot (retrieved 2026-07-16), which is a secondhand summary, not a primary source. The two primary sites (myescambia.com, cityofpensacola.com) returned HTTP 403 to automated fetches, so none of these have been confirmed against an official page. County-commission addresses are role-based (district{N}@myescambia.com) and structurally stable across elections; city-council addresses are person-based and change with every election. Before this data is used to email real officials, confirm all seven city-council addresses with the Pensacola City Clerk and re-check the full roster each election cycle (see per-entry verified:false flags). No map or API supplies contact info; verification is manual.",
+    "note": "MIXED VERIFICATION — read per-entry flags before use. COUNTY commission entries are VERIFIED against the official Escambia County 'Elected Officials' page (myescambia.com/open-government/elected-officials, reviewed via screenshot 2026-07-17): names, districts, role-based emails (district{N}@myescambia.com), phones, and term expirations all match the official page. CITY council names, districts, and roles are confirmed against the official City of Pensacola staff directory (cityofpensacola.com/directory.aspx?did=7, screenshot 2026-07-17), but that directory shows emails only as 'Email Council <name>' LINKS — the addresses themselves were not visible, so every city email remains verified:false (pattern-style guesses) until confirmed by opening those links or asking the City Clerk. Phones were transcribed from phone-screen screenshots; re-verify before publishing them in any UI (two city phones were omitted as not clearly legible). Re-check the full roster each election cycle.",
     "sources": {
-      "county_commission_roster": "Google AI Overview of 'escambia county commission email addresses' (cites MyEscambia.com), screenshot 2026-07-16",
-      "city_council_roster": "Google AI Overview of 'city of pensacola email addresses city council' (cites cityofpensacola.com City Council directory), screenshot 2026-07-16"
+      "county_commission_roster": "https://myescambia.com/open-government/elected-officials (official county page; reviewed via screenshot 2026-07-17)",
+      "city_council_roster": "https://www.cityofpensacola.com/directory.aspx?did=7 (official city staff directory; reviewed via screenshot 2026-07-17 — emails link-only, not shown)"
     },
-    "last_reviewed": "2026-07-16",
-    "verification_status": "unverified"
+    "last_reviewed": "2026-07-17",
+    "verification_status": "county verified; city emails unverified"
   },
   "roster": {
     "county_commission": {
       "body": "Escambia County Board of County Commissioners",
       "districts": 5,
       "email_type": "role",
-      "email_note": "Role-based per-district addresses (district{N}@myescambia.com). Stable across elections; only the officeholder name changes.",
+      "email_note": "Role-based per-district addresses (district{N}@myescambia.com), confirmed on the official Elected Officials page. Stable across elections; only the officeholder name changes.",
       "members": [
-        { "district": 1, "name": "Steve Stroberger", "email": "district1@myescambia.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 2, "name": "Mike Kohler", "email": "district2@myescambia.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 3, "name": "Lumon May", "email": "district3@myescambia.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 4, "name": "Ashlee Hofberger", "email": "district4@myescambia.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 5, "name": "Steven Barry", "email": "district5@myescambia.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" }
+        { "district": 1, "name": "Steve Stroberger", "email": "district1@myescambia.com", "phone": "(850) 595-4910", "term_expires": "November 2028", "verified": true, "source": "myescambia.com/open-government/elected-officials", "retrieved": "2026-07-17" },
+        { "district": 2, "name": "Mike Kohler", "email": "district2@myescambia.com", "phone": "(850) 595-4920", "term_expires": "November 2026", "verified": true, "source": "myescambia.com/open-government/elected-officials", "retrieved": "2026-07-17" },
+        { "district": 3, "name": "Lumon May", "email": "district3@myescambia.com", "phone": "(850) 595-4930", "term_expires": "November 2028", "verified": true, "source": "myescambia.com/open-government/elected-officials", "retrieved": "2026-07-17" },
+        { "district": 4, "name": "Ashlee Hofberger", "email": "district4@myescambia.com", "phone": "(850) 595-4940", "term_expires": "November 2026", "verified": true, "source": "myescambia.com/open-government/elected-officials", "retrieved": "2026-07-17" },
+        { "district": 5, "name": "Steven Barry", "email": "district5@myescambia.com", "phone": "(850) 595-4950", "term_expires": "November 2028", "verified": true, "source": "myescambia.com/open-government/elected-officials", "retrieved": "2026-07-17" }
       ]
     },
     "city_council": {
       "body": "Pensacola City Council",
       "districts": 7,
       "email_type": "personal",
-      "email_note": "Person-based addresses (firstinitial+lastname@cityofpensacola.com). Change with every election — MUST be re-confirmed with the City Clerk before public use.",
+      "email_note": "Person-based addresses (firstinitial+lastname@cityofpensacola.com). Change with every election — MUST be re-confirmed (directory links or City Clerk) before public use.",
+      "roster_note": "Names, districts, and roles for all 7 members confirmed against the official staff directory (2026-07-17). The directory renders emails as links without showing the address, so the email strings below are still pattern-inferred and unverified.",
       "members": [
-        { "district": 1, "name": "Jennifer Brahier", "role": "Vice President", "email": "jbrahier@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 2, "name": "Charles Bare", "email": "cbare@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 3, "name": "Casey Jones", "email": "cjones@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 4, "name": "Jared Moore", "email": "jmoore@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16", "note": "Pattern-inferred style address; the README previously flagged this as unconfirmed." },
-        { "district": 5, "name": "Teniadé Broughton", "email": "tbroughton@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" },
-        { "district": 6, "name": "Allison Patton", "role": "President", "email": "apatton@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16", "note": "Pattern-inferred style address; the README previously flagged this as unconfirmed." },
-        { "district": 7, "name": "Delarian Wiggins", "email": "dewiggins@cityofpensacola.com", "verified": false, "source": "google-ai-overview", "retrieved": "2026-07-16" }
+        { "district": 1, "name": "Jennifer Brahier", "role": "Vice President", "email": "jbrahier@cityofpensacola.com", "phone": "850-903-2750", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district/role", "retrieved": "2026-07-17" },
+        { "district": 2, "name": "Charles Bare", "email": "cbare@cityofpensacola.com", "phone": "850-977-3862", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district", "retrieved": "2026-07-17" },
+        { "district": 3, "name": "Casey Jones", "email": "cjones@cityofpensacola.com", "phone": "850-903-2058", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district", "retrieved": "2026-07-17" },
+        { "district": 4, "name": "Jared Moore", "email": "jmoore@cityofpensacola.com", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district", "retrieved": "2026-07-17", "note": "Directory phone not clearly legible in screenshot — omitted rather than guessed." },
+        { "district": 5, "name": "Teniadé Broughton", "email": "tbroughton@cityofpensacola.com", "phone": "850-903-2051", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district", "retrieved": "2026-07-17" },
+        { "district": 6, "name": "Allison Patton", "role": "President", "email": "apatton@cityofpensacola.com", "phone": "850-977-3892", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district/role", "retrieved": "2026-07-17" },
+        { "district": 7, "name": "Delarian Wiggins", "email": "dewiggins@cityofpensacola.com", "verified": false, "source": "google-ai-overview (email); official directory confirms name/district", "retrieved": "2026-07-17", "note": "Directory phone not visible in screenshot — omitted." }
       ]
     },
     "fdot_district_3": {

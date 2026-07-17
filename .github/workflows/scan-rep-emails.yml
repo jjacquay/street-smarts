@@ -19,6 +19,14 @@ on:
   # Quarterly-ish; contact rosters change on election cycles, not weekly.
   schedule:
     - cron: "23 8 5 1,4,7,10 *"
+  # Probe mode: touching the scanner (or this file) in a PR runs the scan on a
+  # runner with open internet — the dev sandbox cannot reach these gov sites —
+  # and publishes the report as an artifact + step summary. No PR is opened
+  # from pull_request events.
+  pull_request:
+    paths:
+      - scripts/scan_representative_emails.py
+      - .github/workflows/scan-rep-emails.yml
 
 permissions:
   contents: write
@@ -38,7 +46,20 @@ jobs:
           mkdir -p docs
           python3 scripts/scan_representative_emails.py --out docs/rep-email-scan-report.md
 
+      - name: Publish report to step summary
+        if: always()
+        run: cat docs/rep-email-scan-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rep-email-scan-report
+          path: docs/rep-email-scan-report.md
+
       - name: Open pull request with the scan report
+        # Probe runs from pull_request events publish artifact + summary only.
+        if: github.event_name != 'pull_request'
         uses: peter-evans/create-pull-request@v6
         with:
           branch: rep-email-scan/${{ github.run_id }}

@@ -25,5 +25,7 @@ jobs:
         run: python3 scripts/test_recompute_corridor_districts.py
       - name: Representative email scan tests
         run: python3 scripts/test_scan_representative_emails.py
+      - name: District boundary discovery tests
+        run: python3 scripts/test_fetch_district_boundaries.py
       - name: Email generator logic tests
         run: node scripts/test_email_generator.mjs

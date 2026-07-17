@@ -96,21 +96,25 @@ through. The **in-app email generator** (in the Packet builder section) consumes
 it: select a corridor, review the recipients, and open a pre-filled email — or
 copy the text — addressed to the officials responsible for that street.
 
-> **Status — read before relying on this.** The generator works, but the data it
-> uses is **not launch-ready**. The roster is **unverified**: every email
-> currently comes from a Google AI Overview screenshot (a secondhand summary, not
-> an official page) and is flagged `verified: false` — the UI shows an "unverified
-> addresses" warning for exactly this reason. The `corridor_districts` block is a
-> schema-complete scaffold (empty arrays) until `recompute_corridor_districts.py`
-> is run against real district boundaries, so until then the generator can't
-> auto-match a street to specific districts and asks the user to pick recipients
-> from the full roster.
+> **Status — read before relying on this.** The generator works; the data is
+> **partially verified**. The **county roster is verified** against the official
+> Elected Officials page (myescambia.com/open-government/elected-officials,
+> 2026-07-17): names, districts, role-based emails, phones, and term expirations
+> all match. The **city roster's names/districts/roles are confirmed** against
+> the official staff directory (cityofpensacola.com/directory.aspx?did=7), but
+> that page shows emails only as links — so the seven **city email addresses
+> remain unverified** (`verified: false`) and the UI keeps its "unverified
+> addresses" warning until they're confirmed. The `corridor_districts` block is
+> still a schema-complete scaffold (empty arrays) until
+> `recompute_corridor_districts.py` runs against real district boundaries, so
+> the generator can't yet auto-match a street to districts and asks the user to
+> pick recipients.
 
 **Verify before public use** (see the file's `_meta.note`): county-commission
-addresses are role-based (`district{N}@myescambia.com`) and stable across
-elections; city-council addresses are person-based and change every cycle —
-confirm all seven with the City Clerk. No map or API supplies contact info; that
-stays a manual check.
+addresses are role-based (`district{N}@myescambia.com`), officially confirmed,
+and stable across elections; city-council addresses are person-based and change
+every cycle — confirm all seven via the directory's email links or the City
+Clerk, and re-check the roster each election.
 
 `scripts/recompute_corridor_districts.py` populates the `corridor_districts`
 block from **current** district boundaries (the block currently ships as an empty
@@ -135,6 +139,21 @@ Geometry must be WGS84 lon/lat (`outSR=4326`). If a layer needs a token,
 download it once and pass `--county-file` / `--city-file`. Tests:
 `python3 scripts/test_recompute_corridor_districts.py` (also run in CI).
 
+Nobody has confirmed endpoints for those two boundary layers yet, so
+`scripts/fetch_district_boundaries.py` **discovers** them: it searches the
+public ArcGIS Online index and walks candidate government ArcGIS servers,
+validates every candidate hard (exactly 5 county / 7 city polygon features, one
+in-range district per feature via the recompute tool's own field detection),
+prefers official-domain hosts, and **aborts rather than guesses** on ambiguity.
+It must run in CI — the dev sandbox has no outbound internet to GIS hosts.
+`.github/workflows/refresh-districts.yml` runs it two ways: opening a PR that
+touches the discovery script runs a **report-only probe** (artifact + step
+summary, writes nothing); a manual `workflow_dispatch` does the full run —
+download boundaries to `data/district_boundaries/`, recompute
+`corridor_districts`, and open a data PR for review. Dispatch inputs
+`county_url` / `city_url` bypass discovery when the real endpoints are known.
+Tests: `python3 scripts/test_fetch_district_boundaries.py` (also run in CI).
+
 ### Periodic email scan (drift check)
 
 `scripts/scan_representative_emails.py` is a **non-destructive** drift check: it
@@ -144,10 +163,12 @@ expected domain, diffs that against the roster, and writes a Markdown report. It
 match on a page is a *candidate* for manual confirmation, not a confirmation.
 
 The `.github/workflows/scan-rep-emails.yml` workflow runs it on a schedule and
-opens a pull request carrying the report for a human to review. Expect partial
-results: the official sites may block automated fetches (both returned HTTP 403
-in testing), in which case the affected body is reported as "could not read
-source" rather than failing. Tests:
+opens a pull request carrying the report for a human to review; a PR that
+touches the scanner runs it in **probe mode** (report as artifact + step
+summary, no PR opened) — useful because CI runners can reach the gov sites the
+dev sandbox cannot. Expect partial results: the official sites may block
+automated fetches (both 403'd the sandbox in testing), in which case the
+affected body is reported as "could not read source" rather than failing. Tests:
 `python3 scripts/test_scan_representative_emails.py` (also run in CI). Offline
 use: `--html-file county_commission=page.html` parses saved HTML without network.
 
@@ -158,8 +179,8 @@ and 2 are the real blockers; nothing below matters if the recipients are wrong.
 
 | # | Item | What's needed | Status |
 |---|------|---------------|--------|
-| 1 | **Roster accuracy** | Every email in `representatives.json` is currently **unverified** — sourced from a Google AI Overview screenshot, not an official page, and flagged `verified: false`. Confirm all 7 city-council emails with the City Clerk (person-based, change each election) and re-check the full roster each cycle. County addresses are role-based and structurally stable. No map or API supplies contact info; this is manual. | ☐ Emails imported (unverified) |
-| 2 | **District boundaries** | Confirm the real county (`gismaps.myescambia.com`) and city (`maps.cityofpensacola.com`) ArcGIS layer numbers + district field, then run `scripts/recompute_corridor_districts.py` (dry-run first). The `corridor_districts` block is an empty scaffold until this runs. | ☐ Tooling merged; needs the real layers |
+| 1 | **Roster accuracy** | **County: verified** against the official Elected Officials page (2026-07-17) — names, districts, `district{N}@myescambia.com` emails, phones, terms. **City: names/districts/roles verified** against the official staff directory, but the directory shows emails as links only, so the 7 city addresses stay `verified: false` until confirmed (open each "Email Council …" link, ask the City Clerk, or check the CI email-scan report). Re-check every election. | ◐ County verified; city emails pending |
+| 2 | **District boundaries** | `corridor_districts` is still an empty scaffold. `fetch_district_boundaries.py` + `refresh-districts.yml` now discover + validate the boundary layers from CI (the sandbox can't reach GIS hosts). Next: read the PR probe run's discovery report; if layers are found, dispatch the workflow from `main` and review the data PR. If discovery finds nothing public, request endpoints from county/city GIS and pass them as dispatch inputs. | ◐ Discovery tooling merged; awaiting first CI probe |
 | 3 | **In-app email generator** | Built (Packet builder section): resolves a corridor's `corridor_districts` to officials, renders a recipient checklist (pre-checking matched districts), and opens a pre-filled `mailto:` or copies the text. Recipients are framed as "the officials responsible for this street." Logic is unit-tested (`scripts/test_email_generator.mjs`, in CI). Blocked on items 1–2 for accuracy: it shows an unverified-address warning and, with the district scaffold empty, asks the user to pick recipients. | ☑ Built; gated on roster + district data |
 | 4 | **Crash date windows** | Crashes (2018–2022) and fatalities (2022–2024) must never be shown as one range. Done in the generated email body; the homepage still needs a pass. | ◐ Email done; homepage pending |
 
@@ -182,7 +203,8 @@ and 2 are the real blockers; nothing below matters if the recipients are wrong.
 ├── vendor/
 │   └── leaflet/                     # Self-hosted Leaflet 1.9.4 (js, css, marker images)
 ├── scripts/                         # Data pipeline (fetch FDOT/FARS/OSM, join, build GeoJSON)
-│                                    #  + recompute_corridor_districts.py, scan_representative_emails.py (+ tests)
+│                                    #  + recompute_corridor_districts.py, scan_representative_emails.py,
+│                                    #    fetch_district_boundaries.py (+ tests)
 └── docs/
     └── IMPLEMENTATION.md            # Implementation notes + backlog
 ```
