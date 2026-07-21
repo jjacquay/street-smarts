@@ -39,7 +39,31 @@ sequence without a manual.
 - [x] No horizontal scroll at 320px width (verified in headless Chromium)
 - [x] Corridor selection is keyboard-operable via the ranked list of buttons (the map itself is mouse/touch click)
 
+## CI as the network probe
+
+The dev sandbox has no outbound internet beyond package registries (government
+and GIS hosts 403 at the proxy), but GitHub-hosted runners do. Anything that
+needs the open web — the rep-email scan, district-boundary discovery, the data
+refresh — therefore runs as a workflow. The scan and discovery workflows also
+trigger on PRs that touch their own scripts, in **report-only probe mode**
+(artifact + step summary, no writes, no PR), so a change pushed from the sandbox
+gets real-network results minutes later without merging first.
+
 ## Backlog (post-MVP)
+
+- **In-app email generator (built).** Lives in the Packet builder section of
+  `index.html`. `resolveOfficials()` maps a corridor's `corridor_districts` to
+  roster members; the UI renders a recipient checklist (matched districts
+  pre-checked), shows an "unverified addresses" warning, and builds a `mailto:`
+  or copies the email text. Recipients are framed as "the officials responsible
+  for this street." The DOM-free logic (`resolveOfficials`, `buildEmailSubject`,
+  `buildEmailBody`, `buildMailto`, …) sits between the `EMAIL-GEN PURE LOGIC`
+  markers and is unit-tested by `scripts/test_email_generator.mjs` (Node, no npm
+  deps; runs in CI). **Still gated on data, not code:** (1) all roster emails are
+  `verified: false` (from an AI Overview) — confirm with the City Clerk; (2) the
+  `corridor_districts` block is an empty scaffold until
+  `recompute_corridor_districts.py` runs against real boundaries, so today the
+  generator can't auto-match districts and asks the user to pick recipients.
 
 - ACS equity join is built (`scripts/fetch_acs_escambia.py` + `scripts/join_acs_to_corridors.py`, surfaced in the corridor detail + packet, gated on data presence). It populates once the `refresh-data.yml` workflow runs with a `CENSUS_API_KEY` secret. Follow-up: the tract→corridor join uses a pure-Python point-in-polygon over line vertices — good enough for equity context, but not a length-exact GIS overlay. Add non-fatal 2023+ crashes once Florida SB 1614's public-access window allows.
 - Hotspot windows (`scripts/add_hotspot_windows.py`) surface the highest-crash 0.5-mile stretch within each corridor — a simplified analog of the Safer Streets Priority Finder's sliding-window method (see README Acknowledgements). Populates on the next `refresh-data.yml` run (needs raw crash points fetched in CI; not present in this dev environment, so it hasn't run against live data yet as of this writing — verify the first CI output before trusting the numbers in a real packet). Deliberately does NOT attempt SSPF's Bayesian predictive risk modeling for un-observed segments — that requires a real statistical model and dedicated validation, not a client-side simplification, and a fake version would risk misleading prioritization decisions.

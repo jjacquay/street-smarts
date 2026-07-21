@@ -4,8 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light dark" />
-<meta name="description" content="SaferStreets Simplified (Escambia MVP) — a plain-language street safety tool for residents, journalists, teachers, nonprofits, and city council members." />
-<title>SaferStreets Simplified — Escambia MVP</title>
+<meta name="description" content="Street Smart (Escambia MVP) — a plain-language street safety tool for residents, journalists, teachers, nonprofits, and city council members." />
+<title>Street Smart — Escambia MVP</title>
 <link rel="icon" type="image/png" href="assets/brand/favicon.png" />
 <link rel="apple-touch-icon" href="assets/brand/logo-mark.png" />
 
@@ -16,25 +16,36 @@
 
 <style>
   /* ---------- design tokens (WCAG AA verified contrast) ---------- */
+
+  /* Self-hosted type (vendor/fonts, SIL OFL): Public Sans — the USWDS open
+     typeface — for UI; Libre Caslon Text for display. */
+  @font-face{ font-family:"Public Sans"; src:url("vendor/fonts/public-sans-latin-400-normal.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face{ font-family:"Public Sans"; src:url("vendor/fonts/public-sans-latin-600-normal.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:swap; }
+  @font-face{ font-family:"Public Sans"; src:url("vendor/fonts/public-sans-latin-700-normal.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; }
+  @font-face{ font-family:"Libre Caslon Text"; src:url("vendor/fonts/libre-caslon-text-latin-400-normal.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face{ font-family:"Libre Caslon Text"; src:url("vendor/fonts/libre-caslon-text-latin-700-normal.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; }
+  @font-face{ font-family:"Libre Caslon Text"; src:url("vendor/fonts/libre-caslon-text-latin-400-italic.woff2") format("woff2"); font-weight:400; font-style:italic; font-display:swap; }
+
   :root{
-    --bg:#ffffff;
-    --bg-alt:#f4f6f8;
-    --surface:#ffffff;
-    --ink:#0b2545;            /* brand navy family, on white ~15:1 */
-    --ink-soft:#36495a;       /* on white: 8.6:1  (was muted #6b7a87 ~ 4.0:1 — fixed) */
-    --ink-faint:#56697a;      /* on white: 5.9:1  */
-    --line:#c9d2db;           /* non-text 3:1+ on white */
-    --line-strong:#8a98a7;
-    --navy:#012c63;           /* logo navy (car / check / wordmark), on white ~13.6:1 */
-    --brand:#016bdf;          /* logo blue (pedestrian), on white ~5.0:1 (AA) */
-    --brand-ink:#ffffff;
-    --brand-hover:#0154b0;
+    --bg:#f7f2e7;            /* cream paper */
+    --bg-alt:#efe7d6;
+    --surface:#fefcf6;        /* warm card white */
+    --ink:#1e2c3a;            /* brand navy family, on white ~15:1 */
+    --ink-soft:#41505e;       /* on white: 8.6:1  (was muted #6b7a87 ~ 4.0:1 — fixed) */
+    --ink-faint:#5b6a76;      /* on white: 5.9:1  */
+    --line:#ddd3c0;           /* non-text 3:1+ on white */
+    --line-strong:#857758;
+    --navy:#1f3a5f;           /* logo navy (car / check / wordmark), on white ~13.6:1 */
+    --brand:#1d4f91;          /* engraved federal blue, 7.3:1 on paper */
+    --brand-ink:#fefcf6;
+    --brand-hover:#163c6e;
     --brand-green:#5d9c37;    /* logo green (bike) — large elements / swatches */
-    --accent:#016bdf;         /* brand blue for accent links + input focus */
-    --warn-bg:#fff4e5;
+    --accent:#1d4f91;
+    --red:#a3271f;            /* signal red — kickers, rules, key numerals */
+    --warn-bg:#f7e8d2;
     --warn-ink:#7a3a00;       /* on warn-bg ~ 7:1 */
     --ok:#3f7a1f;             /* brand-green family, on white ~5.5:1 */
-    --ok-bg:#eaf3e1;
+    --ok-bg:#e9efdb;
     /* 3-tier red gradient — every tier reads as red (all corridors are on the high-injury network) */
     --risk-vhigh:#67000d;    /* Highest */
     --risk-high:#a50f15;     /* Higher */
@@ -50,32 +61,33 @@
     --band-yellow:#b8860b;
     --band-orange:#c25610;
     --band-red:#b3261e;
-    --focus:#016bdf;
-    --shadow:0 1px 2px rgba(14,26,36,.06), 0 4px 12px rgba(14,26,36,.06);
-    --radius:10px;
-    --radius-sm:6px;
+    --focus:#a3271f;
+    --shadow:0 1px 0 rgba(30,44,58,.04), 0 6px 18px rgba(30,44,58,.05);
+    --radius:6px;
+    --radius-sm:3px;
     --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
     --space-5:24px; --space-6:32px; --space-7:48px;
     --tap:44px; /* WCAG 2.2 target size */
-    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Libre Caslon Text", Georgia, "Times New Roman", serif;
     --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0e1a24;
-      --bg-alt:#142532;
-      --surface:#172a39;
-      --ink:#f5f8fa;          /* 17:1 on bg */
-      --ink-soft:#cbd5df;     /* 11:1 on bg */
-      --ink-faint:#9aaab8;    /* 6.3:1 on bg */
-      --line:#33485a;
-      --line-strong:#6c8095;
-      --navy:#cfe0f5;         /* navy role inverts to a light tint on dark bg */
-      --brand:#6fb0ff;        /* logo-blue tint, ~8:1 on bg */
-      --brand-ink:#0e1a24;
-      --brand-hover:#a7d0ff;
+      --bg:#101b26;
+      --bg-alt:#16222e;
+      --surface:#182531;
+      --ink:#f2ead9;          /* 17:1 on bg */
+      --ink-soft:#cfc6b4;     /* 11:1 on bg */
+      --ink-faint:#a4a08f;    /* 6.3:1 on bg */
+      --line:#31414f;
+      --line-strong:#75838f;
+      --navy:#d8e4f4;         /* navy role inverts to a light tint on dark bg */
+      --brand:#8ab4ec;        /* logo-blue tint, ~8:1 on bg */
+      --brand-ink:#101b26;
+      --brand-hover:#b3d0f5;
       --brand-green:#7bc14a;
-      --accent:#6fb0ff;
+      --accent:#8ab4ec;
       --warn-bg:#3a2410;
       --warn-ink:#ffd9b3;
       --ok:#8fce6a;
@@ -91,24 +103,24 @@
       --band-yellow:#ffcf4d;
       --band-orange:#ffa24d;
       --band-red:#ff6b6b;
-      --focus:#6fb0ff;
+      --focus:#ff9d8f; --red:#ff9d8f;
       --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
     }
   }
   [data-theme="light"]{ color-scheme: light; }
   [data-theme="dark"]{
     color-scheme: dark;
-    --bg:#0e1a24; --bg-alt:#142532; --surface:#172a39;
-    --ink:#f5f8fa; --ink-soft:#cbd5df; --ink-faint:#9aaab8;
-    --line:#33485a; --line-strong:#6c8095;
-    --navy:#cfe0f5;
-    --brand:#6fb0ff; --brand-ink:#0e1a24; --brand-hover:#a7d0ff; --brand-green:#7bc14a;
-    --accent:#6fb0ff; --warn-bg:#3a2410; --warn-ink:#ffd9b3;
+    --bg:#101b26; --bg-alt:#16222e; --surface:#182531;
+    --ink:#f2ead9; --ink-soft:#cfc6b4; --ink-faint:#a4a08f;
+    --line:#31414f; --line-strong:#75838f;
+    --navy:#d8e4f4;
+    --brand:#8ab4ec; --brand-ink:#101b26; --brand-hover:#b3d0f5; --brand-green:#7bc14a;
+    --accent:#8ab4ec; --warn-bg:#3a2410; --warn-ink:#ffd9b3;
     --ok:#8fce6a; --ok-bg:#143523;
     --risk-vhigh:#ff7a7a; --risk-high:#ff9d8a; --risk-med:#ffb8a3; --risk-low:#ffb8a3;
     --risk-vhigh-text:#ff7a7a; --risk-high-text:#ff9d8a; --risk-med-text:#ffb8a3; --risk-low-text:#ffb8a3;
     --band-yellow:#ffcf4d; --band-orange:#ffa24d; --band-red:#ff6b6b;
-    --focus:#6fb0ff;
+    --focus:#ff9d8f; --red:#ff9d8f;
   }
 
   /* ---------- base ---------- */
@@ -164,11 +176,20 @@
     border:1px solid var(--line);
     object-fit:contain; flex:none;
   }
+  /* Icon + HTML wordmark (the old lockup PNG had the previous project name
+     baked into the artwork). Fixed colors: the card is always white. */
   .footer-logo{
-    display:block; margin:0 auto;
-    width:180px; height:auto;
-    background:#fff; padding:10px 16px;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    width:max-content; margin:0 auto;
+    background:#fff; padding:14px 22px 12px;
     border-radius:12px; border:1px solid var(--line);
+  }
+  .footer-logo img{ width:96px; height:auto; margin-bottom:6px; }
+  .footer-logo strong{
+    color:#17365c; font-size:21px; letter-spacing:0.06em; line-height:1;
+  }
+  .footer-logo span{
+    color:#2f76b8; font-size:11px; font-weight:700; letter-spacing:0.28em; line-height:1.6;
   }
   /* flex on <summary> hides the native marker; provide our own caret */
   .details-caret{ display:inline-block; transition:transform .12s ease; }
@@ -544,6 +565,49 @@
   .packet-preview h3{ margin: 0 0 8px; font-size: 18px; }
   .packet-preview ul{ margin: 8px 0 0 1.2em; padding: 0; }
 
+  /* ---------- email generator ---------- */
+  .email-gen{ margin-top: 16px; }
+  .email-gen h3{ margin: 0 0 4px; font-size: 18px; }
+  .eg-group{
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 10px 12px; margin: 10px 0 0;
+  }
+  .eg-group legend{ font-weight: 700; font-size: 14px; padding: 0 6px; }
+  .eg-recip{
+    display:flex; align-items:flex-start; gap:8px;
+    min-height: var(--tap); padding: 4px 0;
+    font-size: 15px; cursor: pointer;
+  }
+  .eg-recip input{ margin-top: 4px; width: 18px; height: 18px; }
+  .eg-recip[data-nomail="true"]{ color: var(--ink-faint); cursor: not-allowed; }
+  .eg-recip .eg-addr{ color: var(--ink-soft); font-size: 13px; }
+  .eg-note{ font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+  .eg-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+
+
+  /* ---------- civic-editorial identity ---------- */
+  section.panel h2, .hero h1.hero-h, .card h3, .card h2.card-h,
+  #pp-name, .packet-preview h3, .brand > span, .footer-logo strong{
+    font-family: var(--font-display);
+  }
+  section.panel h2{ font-size: 26px; }
+  .brand > span{ font-size: 17px; }
+  .brand small{ font-family: var(--font); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+  .hero h1.hero-h em{ font-style: italic; font-weight: 400; }
+  .topbar{ border-top: 4px solid var(--red); }
+  .qbadge{
+    background: transparent; border: none; border-radius: 0;
+    padding: 0 0 2px; color: var(--red);
+    font-weight: 700; font-size: 12px; letter-spacing: .18em;
+  }
+  .qbadge::before{
+    content:""; display:inline-block; width: 26px; height: 2px;
+    background: var(--red); margin-right: 10px; vertical-align: 3px;
+  }
+  .sidenav a .num{ color: var(--red); font-weight: 700; }
+  .hero-stat .num, .feature-stat .num{ font-family: var(--font-display); }
+  .feature-stat .num{ color: var(--red); }
+
   /* ---------- helpers ---------- */
   .visually-hidden{
     position:absolute !important;
@@ -627,7 +691,7 @@
   }
   .hero h1.hero-h em{
     font-style: normal;
-    background: linear-gradient(180deg, transparent 60%, rgba(220,38,38,0.25) 60%);
+    background: linear-gradient(180deg, transparent 62%, color-mix(in srgb, var(--red) 26%, transparent) 62%);
     padding: 0 2px;
   }
   .hero-sub{
@@ -704,6 +768,7 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: 600;
+    overflow-wrap: anywhere;   /* long single words (e.g. COUNTERMEASURES) wrap, not clip, at 320px */
   }
   .hero-map-wrap{
     position: relative;
@@ -889,10 +954,10 @@
           id="menu-toggle">
     <span aria-hidden="true">☰</span>
   </button>
-  <a class="brand" href="#overview" aria-label="SaferStreets Simplified, Escambia MVP home">
+  <a class="brand" href="#overview" aria-label="Street Smart, Escambia MVP home">
     <img class="brand-logo" src="assets/brand/logo-mark.png" alt="" aria-hidden="true" width="38" height="38" />
     <span>
-      SaferStreets <small>Escambia · Plain-language MVP</small>
+      Street Smart <small>Escambia · Plain-language MVP</small>
     </span>
   </a>
   <div class="topbar-spacer"></div>
@@ -934,7 +999,7 @@
     </div>
     <div class="hero-map-wrap">
       <div id="hero-map" class="hero-map" aria-label="Crash injury heat map of Escambia County"></div>
-      <div class="hero-map-badge">Crash injury heat map · 2018–2024</div>
+      <div class="hero-map-badge">Crash injury heat map · crashes 2018–22 · fatals 2022–24</div>
     </div>
   </div>
 </section>
@@ -963,7 +1028,7 @@
           <span class="qbadge">Why are we here?</span>
           <h1 id="overview-h">Make street safety understandable in plain language.</h1>
           <p class="lede">
-            SaferStreets Simplified helps city council members, nonprofits, journalists, teachers, and residents
+            Street Smart helps city council members, nonprofits, journalists, teachers, and residents
             see where streets are most dangerous in Escambia County, what to do first, and how to explain
             those choices in everyday language.
           </p>
@@ -1170,6 +1235,19 @@
         <ul id="pp-bullets"></ul>
         <p class="notice" id="pp-notice" hidden>This packet is a public-information discussion starter, not a traffic engineering study, design, or professional recommendation. Any treatment needs review by a qualified engineer and the road's owner (FDOT for state roads; the county or city for local roads).</p>
       </div>
+
+      <div class="email-gen" id="email-gen" hidden>
+        <h3 id="eg-h">Email the officials responsible for this street</h3>
+        <p class="muted" id="eg-intro">These are the officials whose districts this corridor runs through — not necessarily your own representatives. Review the recipients, then open a pre-filled email in your mail app.</p>
+        <p class="notice" id="eg-unverified" hidden><strong>Some addresses unverified</strong>Addresses marked "unverified" below have not been confirmed against an official source. Double-check those recipients before you send.</p>
+        <div id="eg-recipients" role="group" aria-label="Choose recipients"></div>
+        <p class="eg-note" id="eg-match-note" hidden></p>
+        <div class="eg-actions">
+          <button class="btn" id="eg-compose" type="button">Open email in your mail app</button>
+          <button class="btn secondary" id="eg-copy" type="button">Copy email text</button>
+        </div>
+        <p class="eg-note" id="eg-status" role="status" aria-live="polite"></p>
+      </div>
     </section>
 
     <!-- COUNTERMEASURES -->
@@ -1219,7 +1297,11 @@
     </section>
 
     <footer class="muted" style="text-align:center; font-size: 13px; margin-top: 24px">
-      <img class="footer-logo" src="assets/brand/logo-lockup.png" alt="SaferStreets Simplified — Escambia" width="180" />
+      <div class="footer-logo" role="img" aria-label="Street Smart — Escambia">
+        <img src="assets/brand/logo-mark.png" alt="" aria-hidden="true" width="96" height="95" />
+        <strong>STREET SMART</strong>
+        <span>— ESCAMBIA —</span>
+      </div>
       <p style="margin:12px auto 0; max-width:70ch">Built on FDOT crash data (2018–2022, all severities) and NHTSA FARS fatals (2022–2024). A prioritization tool — cost and crash-reduction figures are planning estimates, not engineering quotes.</p>
       <details style="max-width:70ch; margin:12px auto 0; text-align:left">
         <summary style="cursor:pointer; min-height:var(--tap); display:flex; align-items:center; justify-content:center; gap:8px; font-weight:600"><span class="details-caret" aria-hidden="true">▸</span>About the data</summary>
@@ -1446,6 +1528,21 @@
       $('corridor-empty').textContent = 'Could not load corridor data. Please check your connection and refresh the page.';
     });
 
+  // Official-contact roster (an UNVERIFIED data layer — see the file's _meta).
+  // Loaded non-blocking: if it fails or is absent, the email generator stays
+  // hidden and the rest of the app is unaffected.
+  state.reps = null;
+  fetch('data/representatives.json')
+    .then(r => r.json())
+    .then(gj => {
+      state.reps = gj;
+      if (state.selected){
+        const c = state.corridors.find(x => x.id === state.selected);
+        if (c) updateEmailGenerator(c);
+      }
+    })
+    .catch(err => { console.error('Representatives load failed', err); });
+
   let heatLoaded = false;
   function loadHeatLayer(){
     if (heatLoaded) return Promise.resolve();
@@ -1490,7 +1587,7 @@
       });
       const popupHtml = `
         <strong>${escapeHtml(c.name)}</strong><br>
-        <span style="color:#56697a">${escapeHtml(c.place)} · priority ${c.priority}/100 (${escapeHtml(BAND[c.band].label)})</span>
+        <span style="color:#5b6a76">${escapeHtml(c.place)} · priority ${c.priority}/100 (${escapeHtml(BAND[c.band].label)})</span>
         <div class="pop-stats">
           <b>${fmtInt(c.crash_count)}</b> crashes along ${c.length_mi.toFixed(1)} mi<br>
           <b>${fmtInt(c.fatal_count)}</b> fatal · <b>${fmtInt(c.serious_injury_count)}</b> serious injury
@@ -1686,6 +1783,7 @@
     updatePscSpotlight(c);
     updateHotspot(c);
     updateEquity(c);
+    updateEmailGenerator(c);
 
     // Pan map to corridor bounds and open popup at center
     const layer = state.lines.get(id);
@@ -1957,8 +2055,8 @@
       return;
     }
     const lines = [
-      'SaferStreets Simplified — Corridor Packet',
-      '=========================================',
+      'Street Smart — Corridor Packet',
+      '=================================',
       'A public-information discussion starter — not a traffic engineering study,',
       'design, or professional recommendation.',
       '',
@@ -2044,16 +2142,216 @@
     lines.push('Florida SB 1614 (Mar 2023) creates a 60-day public-access privacy window; non-fatal 2023+ data');
     lines.push('is not yet public. CMF sources: FHWA Proven Safety Countermeasures, FHWA CMF Clearinghouse (3-5 star).');
     lines.push('');
-    lines.push('(Generated by SaferStreets Simplified — Escambia MVP)');
+    lines.push('(Generated by Street Smart — Escambia MVP)');
     const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'saferstreets-' + c.id + '.txt';
+    a.download = 'street-smart-' + c.id + '.txt';
     document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
   });
 
+
+  /* ---------- email the responsible officials ---------- */
+  // The pure logic below is unit-tested from scripts/test_email_generator.mjs,
+  // which extracts the code between these two markers and evaluates it in Node.
+  // Keep it DOM-free and self-contained so that extraction keeps working.
+  // ==== EMAIL-GEN PURE LOGIC START ====
+  function resolveOfficials(reps, corridorId){
+    const result = { county: [], city: [], fdot: [], matched: false };
+    if (!reps || !reps.roster) return result;
+    const roster = reps.roster;
+    const cd = (reps.corridor_districts && reps.corridor_districts[corridorId]) || null;
+    const byDistrict = (bodyKey, nums) => {
+      const members = (roster[bodyKey] && roster[bodyKey].members) || [];
+      if (!nums || !nums.length) return [];
+      const want = nums.map(String);
+      return members.filter(m => want.indexOf(String(m.district)) !== -1);
+    };
+    if (cd){
+      result.county = byDistrict('county_commission', cd.county);
+      result.city = byDistrict('city_council', cd.city);
+      result.matched = (result.county.length + result.city.length) > 0;
+    }
+    // FDOT D3 owns the state routes; always offered as an optional recipient.
+    result.fdot = (((roster.fdot_district_3 || {}).members) || []).filter(m => m.email);
+    return result;
+  }
+
+  function officialLabel(m){
+    const role = m.role ? ' (' + m.role + ')' : '';
+    const dist = (m.district != null) ? ' — District ' + m.district : '';
+    return (m.name || 'Unknown') + role + dist;
+  }
+
+  function anyUnverified(members){
+    return (members || []).some(m => m && m.email && m.verified === false);
+  }
+
+  function buildEmailSubject(corridor){
+    return 'Street safety on ' + corridor.name;
+  }
+
+  // Crash and fatality windows are kept SEPARATE on purpose: FDOT crash data runs
+  // 2018–2022 (all severities), FARS fatals run 2022–2024. Never present them as
+  // one range.
+  function buildEmailBody(corridor, opts){
+    opts = opts || {};
+    const c = corridor;
+    const fmt = (n) => Number(n || 0).toLocaleString('en-US');
+    const lines = [];
+    lines.push('Dear ' + (opts.salutation || 'Commissioner / Council Member') + ',');
+    lines.push('');
+    lines.push('I am writing as a resident concerned about safety on ' + c.name +
+      (c.place ? ' in ' + c.place : '') + '.');
+    lines.push('');
+    let stat = fmt(c.crash_count) + ' crashes were reported on this corridor in the FDOT public crash data for 2018–2022';
+    if (c.fatal_count){
+      stat += ', and NHTSA FARS records ' + fmt(c.fatal_count) + ' traffic death' +
+        (c.fatal_count === 1 ? '' : 's') + ' here for 2022–2024';
+    }
+    stat += '.';
+    if (c.priority != null){
+      stat += ' It ranks ' + c.priority + ' out of 100 on the county high-injury network.';
+    }
+    lines.push(stat);
+    if (c.treatment){
+      lines.push('');
+      lines.push('A commonly used first step for this crash pattern is: ' + c.treatment +
+        '. This is a discussion starter, not an engineering recommendation.');
+    }
+    lines.push('');
+    lines.push('Please consider prioritizing a safety review of this corridor with FDOT ' +
+      '(for state roads) or the county/city (for local roads).');
+    lines.push('');
+    lines.push('Thank you,');
+    lines.push('[Your name]');
+    lines.push('[Your address or neighborhood]');
+    lines.push('');
+    lines.push('—');
+    lines.push('Sent via Street Smart, a public-information tool. Crash figures are ' +
+      'from FDOT public crash data (2018–2022, all severities) and NHTSA FARS (2022–2024, ' +
+      'fatal). This is not a traffic engineering study.');
+    return lines.join('\n');
+  }
+
+  function buildMailto(recipients, subject, body){
+    const to = (recipients || []).filter(Boolean).join(',');
+    return 'mailto:' + to + '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+  }
+  // ==== EMAIL-GEN PURE LOGIC END ====
+
+  // Recipients currently checked in the UI.
+  function checkedRecipientEmails(){
+    return Array.from(document.querySelectorAll('.eg-check:checked'))
+      .map(cb => cb.value).filter(Boolean);
+  }
+
+  function renderRecipientGroup(box, title, members, matchedSet){
+    if (!members || !members.length) return;
+    const fs = document.createElement('fieldset');
+    fs.className = 'eg-group';
+    const lg = document.createElement('legend');
+    lg.textContent = title;
+    fs.appendChild(lg);
+    members.forEach(m => {
+      const hasEmail = !!m.email;
+      const isMatched = hasEmail && matchedSet.has(m.email);
+      const label = document.createElement('label');
+      label.className = 'eg-recip';
+      if (!hasEmail) label.setAttribute('data-nomail', 'true');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.className = 'eg-check';
+      cb.value = m.email || '';
+      cb.checked = isMatched;
+      cb.disabled = !hasEmail;
+      const txt = document.createElement('span');
+      txt.textContent = officialLabel(m) + ' ';
+      const addr = document.createElement('span');
+      addr.className = 'eg-addr';
+      // Per-address verification status: county emails are confirmed against the
+      // official page; city emails are pattern-inferred until confirmed.
+      addr.textContent = !hasEmail ? '(no email on file)'
+        : '<' + m.email + '>' + (m.verified === false ? ' · unverified' : '');
+      label.appendChild(cb);
+      label.appendChild(txt);
+      label.appendChild(addr);
+      fs.appendChild(label);
+    });
+    box.appendChild(fs);
+  }
+
+  function updateEmailGenerator(c){
+    const wrap = $('email-gen');
+    if (!wrap) return;
+    const box = $('eg-recipients');
+    const note = $('eg-match-note');
+    const unverified = $('eg-unverified');
+    const compose = $('eg-compose');
+    const copy = $('eg-copy');
+    $('eg-status').textContent = '';
+    box.innerHTML = '';
+
+    if (!state.reps || !state.reps.roster){
+      // Roster still loading or unavailable — show the section but explain why.
+      wrap.hidden = false;
+      note.hidden = false;
+      note.textContent = 'Official contact data is still loading or is unavailable.';
+      unverified.hidden = true;
+      compose.disabled = true; copy.disabled = true;
+      return;
+    }
+
+    wrap.hidden = false;
+    compose.disabled = false; copy.disabled = false;
+    const off = resolveOfficials(state.reps, c.id);
+    const matchedSet = new Set(off.county.concat(off.city).map(m => m.email).filter(Boolean));
+    const roster = state.reps.roster;
+    const shown = [];
+    [['Escambia County Commission', 'county_commission'],
+     ['Pensacola City Council', 'city_council'],
+     ['FDOT District 3 (state roads)', 'fdot_district_3']].forEach(([title, key]) => {
+      const members = ((roster[key] || {}).members) || [];
+      shown.push.apply(shown, members);
+      renderRecipientGroup(box, title, members, matchedSet);
+    });
+
+    unverified.hidden = !anyUnverified(shown);
+    note.hidden = false;
+    note.textContent = off.matched
+      ? 'Pre-checked recipients are the officials whose districts this street runs through. Add or remove any before sending.'
+      : 'We could not automatically match this street to specific districts yet (the corridor→district map is not populated). Choose the officials who represent this street before sending.';
+  }
+
+  (function wireEmailGenerator(){
+    const compose = $('eg-compose');
+    const copy = $('eg-copy');
+    if (!compose || !copy) return;
+    compose.addEventListener('click', () => {
+      const c = state.corridors.find(x => x.id === state.selected);
+      if (!c){ $('eg-status').textContent = 'Pick a corridor first.'; return; }
+      const emails = checkedRecipientEmails();
+      if (!emails.length){ $('eg-status').textContent = 'Select at least one recipient first.'; return; }
+      window.location.href = buildMailto(emails, buildEmailSubject(c), buildEmailBody(c, {}));
+      $('eg-status').textContent = 'Opening your mail app with ' + emails.length +
+        ' recipient' + (emails.length === 1 ? '' : 's') + '. Verify the addresses before sending.';
+    });
+    copy.addEventListener('click', () => {
+      const c = state.corridors.find(x => x.id === state.selected);
+      if (!c){ $('eg-status').textContent = 'Pick a corridor first.'; return; }
+      const emails = checkedRecipientEmails();
+      const text = 'To: ' + emails.join(', ') + '\nSubject: ' + buildEmailSubject(c) +
+        '\n\n' + buildEmailBody(c, {});
+      const done = () => { $('eg-status').textContent = 'Email text copied to your clipboard.'; };
+      const fail = () => { $('eg-status').textContent = 'Could not copy automatically — select the text manually.'; };
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      } else { fail(); }
+    });
+  })();
 
   /* ---------- v5: hero map + geocoding + detail map ---------- */
   state.heroMap = null;
@@ -2254,7 +2552,7 @@
       '</div>' +
       '<div class="hero-result-name">' + escapeHtml(c.name) + '</div>' +
       '<p class="hero-result-meta">' + escapeHtml(c.place) + ' · ' + distPhrase +
-        ' · ' + fmtInt(c.crash_count) + ' crashes, ' + fmtInt(c.fatal_count) + ' fatal (2018–2024)</p>' +
+        ' · ' + fmtInt(c.crash_count) + ' crashes (2018–2022), ' + fmtInt(c.fatal_count) + ' fatal (2022–2024)</p>' +
       cmLine +
       '<div class="hero-result-actions">' +
         '<button type="button" class="btn" id="hero-result-go">See full details &amp; build a packet</button>' +

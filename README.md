@@ -1,6 +1,14 @@
-# SaferStreets Simplified v2 (Escambia MVP)
+# Street Smart (Escambia MVP)
 
-**Live site:** TBD
+_Formerly **SaferStreets Simplified**. Renamed to avoid confusion with its own
+V1 and with Toole Design's separate [Safer Streets Priority
+Finder](https://github.com/tooledesign/Safer-Streets-Priority-Finder) (see
+Acknowledgements — different codebase, different purpose). Note: "Street Smart"
+is also the name of unrelated regional pedestrian-safety *education campaigns*
+(e.g., MWCOG's bestreetsmart.net); the "Escambia" qualifier matters when citing
+this project._
+
+**Live site:** https://street-smart.vercel.app
 
 A plain-language street safety app for Escambia County, Florida. Built for city council members, nonprofits, journalists, teachers, and residents — not just traffic engineers.
 
@@ -13,6 +21,7 @@ The app answers three questions:
 ## Stack
 
 - Single static `index.html`
+- Self-hosted type under `vendor/fonts/` (SIL OFL 1.1, licenses included): [Public Sans](https://public-sans.digital.gov/) (the USWDS open typeface) for UI, [Libre Caslon Text](https://github.com/impallari/Libre-Caslon-Text) for display — no font CDN, consistent with the CSP's `font-src 'self'`
 - [Leaflet](https://leafletjs.com/) 1.9.4 for the maps (hero overview, priority map, and per-corridor detail map), self-hosted under `vendor/leaflet/` so there is no third-party CDN dependency
 - A real `data/escambia_corridors.geojson` with 18 corridors as MultiLineString geometries (OpenStreetMap centerlines), joined to FDOT public crash data (2018–2022, all severities) and NHTSA FARS fatals (2022–2024), plus a `data/escambia_crash_grid.geojson` aggregated heatmap (150 m cells, low cells suppressed)
 - No build step; deploys directly to Vercel as static files
@@ -27,14 +36,18 @@ python3 -m http.server 5173
 
 ## Deploy
 
-This repo is wired to Vercel with GitHub CI/CD. Every push to `main` triggers a new production deployment at **https://safer-streets-simplified.vercel.app**; pull requests get preview URLs. (Note: the Vercel project's production domain is `safer-streets-simplified`, which differs from the repo name — the dashboard lives at vercel.com/vcllc/saferstreets-simplified-escambia-mvp.)
+The repo is **Vercel-ready** — `vercel.json` carries the full static config
+(`cleanUrls`, security headers + CSP, and the GeoJSON content-type for
+`/data/*`), so there is no build step and no repo changes are needed to deploy.
 
-Vercel settings:
+**This app deploys as its own Vercel project, separate from V1** (the
+`safer-streets-simplified` domain belongs to SaferStreets Simplified **V1**;
+this project is `street-smart` → **https://street-smart.vercel.app**). Settings:
 
-- **Framework preset:** Other (Static HTML)
-- **Build command:** *(none)*
-- **Output directory:** `.`
-- `vercel.json` provides `cleanUrls`, security headers, and GeoJSON content-type for `/data/*`.
+- **Framework preset:** Other · **Build command:** (none) · **Root directory:** `.`
+
+Vercel's Git Integration then deploys every push to `main` to production and
+gives each PR a preview URL.
 
 ## Accessibility
 
@@ -82,18 +95,36 @@ The homepage highlights a real, verifiable federal grant: **"ECRC Pensacola ITS 
 
 ### Representatives & district overlaps
 
-The email generator addresses each corridor's overlapping officials, resolved
-through `data/representatives.json`: a roster (county commission, city council,
-FDOT D3) plus a `corridor_districts` block mapping each corridor to the
-districts it runs through.
+`data/representatives.json` holds the official-contact data layer: a roster
+(Escambia County Commission, Pensacola City Council, FDOT D3) plus a
+`corridor_districts` block mapping each corridor to the districts it runs
+through. The **in-app email generator** (in the Packet builder section) consumes
+it: select a corridor, review the recipients, and open a pre-filled email — or
+copy the text — addressed to the officials responsible for that street.
 
-**Verify before public launch** (see the file's `_meta.note`): the roster goes
-stale with every election, and two city-council emails are pattern-inferred, not
-confirmed. No map fixes contact info — that stays a manual check.
+> **Status — read before relying on this.** The generator works; the data is
+> **partially verified**. The **county roster is verified** against the official
+> Elected Officials page (myescambia.com/open-government/elected-officials,
+> 2026-07-17): names, districts, role-based emails, phones, and term expirations
+> all match. The **city roster's names/districts/roles are confirmed** against
+> the official staff directory (cityofpensacola.com/directory.aspx?did=7), but
+> that page shows emails only as links — so the seven **city email addresses
+> remain unverified** (`verified: false`) and the UI keeps its "unverified
+> addresses" warning until they're confirmed. The `corridor_districts` block is
+> still a schema-complete scaffold (empty arrays) until
+> `recompute_corridor_districts.py` runs against real district boundaries, so
+> the generator can't yet auto-match a street to districts and asks the user to
+> pick recipients.
 
-`scripts/recompute_corridor_districts.py` regenerates the `corridor_districts`
-block from **current** district boundaries (the shipped block was built on a
-pre-2020-census city layer). It reads county and city district polygons from a
+**Verify before public use** (see the file's `_meta.note`): county-commission
+addresses are role-based (`district{N}@myescambia.com`), officially confirmed,
+and stable across elections; city-council addresses are person-based and change
+every cycle — confirm all seven via the directory's email links or the City
+Clerk, and re-check the roster each election.
+
+`scripts/recompute_corridor_districts.py` populates the `corridor_districts`
+block from **current** district boundaries (the block currently ships as an empty
+scaffold — running this tool fills it). It reads county and city district polygons from a
 live ArcGIS REST query **or** a pre-downloaded GeoJSON file (`--*-file`, for when
 the GIS hosts are unreachable), and marks a corridor as overlapping a district
 when any vertex falls inside it **or** any segment crosses its boundary — so a
@@ -114,19 +145,50 @@ Geometry must be WGS84 lon/lat (`outSR=4326`). If a layer needs a token,
 download it once and pass `--county-file` / `--city-file`. Tests:
 `python3 scripts/test_recompute_corridor_districts.py` (also run in CI).
 
-### Pre-launch checklist (email generator)
+Nobody has confirmed endpoints for those two boundary layers yet, so
+`scripts/fetch_district_boundaries.py` **discovers** them: it searches the
+public ArcGIS Online index and walks candidate government ArcGIS servers,
+validates every candidate hard (exactly 5 county / 7 city polygon features, one
+in-range district per feature via the recompute tool's own field detection),
+prefers official-domain hosts, and **aborts rather than guesses** on ambiguity.
+It must run in CI — the dev sandbox has no outbound internet to GIS hosts.
+`.github/workflows/refresh-districts.yml` runs it two ways: opening a PR that
+touches the discovery script runs a **report-only probe** (artifact + step
+summary, writes nothing); a manual `workflow_dispatch` does the full run —
+download boundaries to `data/district_boundaries/`, recompute
+`corridor_districts`, and open a data PR for review. Dispatch inputs
+`county_url` / `city_url` bypass discovery when the real endpoints are known.
+Tests: `python3 scripts/test_fetch_district_boundaries.py` (also run in CI).
 
-Open items before the rep-email generator is resident-facing. Ordered by
-priority — 1 and 2 are the real blockers; nothing below matters if the
-recipients are wrong.
+### Periodic email scan (drift check)
+
+`scripts/scan_representative_emails.py` is a **non-destructive** drift check: it
+fetches the official county/city directory pages, extracts any address on the
+expected domain, diffs that against the roster, and writes a Markdown report. It
+**never edits `representatives.json`** and never flips a `verified` flag — a
+match on a page is a *candidate* for manual confirmation, not a confirmation.
+
+The `.github/workflows/scan-rep-emails.yml` workflow runs it on a schedule and
+opens a pull request carrying the report for a human to review; a PR that
+touches the scanner runs it in **probe mode** (report as artifact + step
+summary, no PR opened) — useful because CI runners can reach the gov sites the
+dev sandbox cannot. Expect partial results: the official sites may block
+automated fetches (both 403'd the sandbox in testing), in which case the
+affected body is reported as "could not read source" rather than failing. Tests:
+`python3 scripts/test_scan_representative_emails.py` (also run in CI). Offline
+use: `--html-file county_commission=page.html` parses saved HTML without network.
+
+### Pre-launch checklist (rep-contact + email feature)
+
+Open items before rep-contact data is resident-facing. Ordered by priority — 1
+and 2 are the real blockers; nothing below matters if the recipients are wrong.
 
 | # | Item | What's needed | Status |
 |---|------|---------------|--------|
-| 1 | **Roster accuracy** | Confirm all 7 city-council emails with the City Clerk (two — Moore, Patton — are pattern-inferred, not verified) and re-check the full roster each election. No map or API supplies contact info; this is manual. | ☐ Not started |
-| 2 | **District boundaries** | Confirm the real county (`gismaps.myescambia.com`) and city (`maps.cityofpensacola.com`) ArcGIS layer numbers + district field, then run `scripts/recompute_corridor_districts.py` (dry-run first). | ☐ Tooling merged; needs the real layers |
-| 3 | **Recipient framing** | Change UI labels from "your representatives" to "the officials responsible for this street" (the email targets the corridor's districts, not necessarily the sender's own). | ☐ Copy drafted |
-| 4 | **Crash date windows** | Split the ranges in the email + homepage: crashes are 2018–2022, fatalities run through 2024. Don't present them as one window. | ☐ Copy drafted |
-| 5 | **Refresh the JS tests** | `patches/test_v7.js` still asserts the pre-v8 subject line, locality sentence, and sign-off; update to the v8 text and run. | ☐ Not started |
+| 1 | **Roster accuracy** | **County: verified twice** — against the official Elected Officials page (screenshot 2026-07-17) *and* by the CI email scan, which fetched that page and found all five `district{N}@myescambia.com` addresses live with zero drift. **City: names/districts/roles verified** against the official staff directory, but the CI scan confirmed the directory HTML exposes **0 email addresses** (link-only), so the 7 city addresses stay `verified: false` until confirmed manually (open each "Email Council …" link or ask the City Clerk). Re-check every election. | ◐ County verified; city emails pending |
+| 2 | **District boundaries** | **Both layers found and validated by the CI probe (2026-07-17):** county `gismaps.myescambia.com/arcgis/rest/services/Escambia_County/MapServer/29` (5 districts, field `DISTRICT`); city `maps.cityofpensacola.com/arcgis/rest/services/Avineon_MIL1/MapServer/34` (9 features covering districts 1–7 — split polygons; 4 identical copies on the city server, deduped). The dry-run recompute assigned districts to **all 18 corridors with no orphans**. Next: merge, dispatch `refresh-districts.yml` from `main`, review the data PR it opens (spot-check a few corridors against the official district maps). | ◐ Layers validated in CI; dispatch after merge |
+| 3 | **In-app email generator** | Built (Packet builder section): resolves a corridor's `corridor_districts` to officials, renders a recipient checklist (pre-checking matched districts), and opens a pre-filled `mailto:` or copies the text. Recipients are framed as "the officials responsible for this street." Logic is unit-tested (`scripts/test_email_generator.mjs`, in CI). Blocked on items 1–2 for accuracy: it shows an unverified-address warning and, with the district scaffold empty, asks the user to pick recipients. | ☑ Built; gated on roster + district data |
+| 4 | **Crash date windows** | Crashes (2018–2022) and fatalities (2022–2024) must never be shown as one range. Done in the generated email body; the homepage still needs a pass. | ◐ Email done; homepage pending |
 
 ## Project structure
 
@@ -139,13 +201,16 @@ recipients are wrong.
 │   ├── escambia_corridors.geojson   # 18 corridors + crash/countermeasure/PSC attributes
 │   ├── escambia_crash_grid.geojson  # 150 m crash-density grid (heatmap)
 │   ├── treatments.json              # 31-treatment catalog
-│   └── psc_content.json             # FHWA PSC narratives
+│   ├── psc_content.json             # FHWA PSC narratives
+│   └── representatives.json         # Official-contact roster (UNVERIFIED) + corridor→district scaffold
 ├── assets/
 │   ├── treatments/                  # Treatment illustration images
 │   └── psc/                         # PSC spotlight images
 ├── vendor/
 │   └── leaflet/                     # Self-hosted Leaflet 1.9.4 (js, css, marker images)
 ├── scripts/                         # Data pipeline (fetch FDOT/FARS/OSM, join, build GeoJSON)
+│                                    #  + recompute_corridor_districts.py, scan_representative_emails.py,
+│                                    #    fetch_district_boundaries.py (+ tests)
 └── docs/
     └── IMPLEMENTATION.md            # Implementation notes + backlog
 ```
@@ -156,6 +221,7 @@ recipients are wrong.
 - **[CyclingMAX](https://cyclingmax.worldbank.org/)** (World Bank / ITDP / Progress Analytics) — the flat conservatism discount applied to this site's benefit-cost estimates is adapted from CyclingMAX's "Induced Benefit Factor."
 - The Fairfield Drive / Pensacola Boulevard featured case study draws on a draft (April 2026) baseline memo **Kimley-Horn** prepared for the **[Emerald Coast Regional Council](https://www.ecrc.org/)** (ECRC, formerly the West Florida Regional Planning Council) under its USDOT SS4A grant, and on ECRC's regional high-injury-network StoryMap. Crash figures there use **[Signal Four Analytics](https://signal4analytics.com/)**, the crash-report database maintained by FDOT and the University of Florida.
 - Road centerlines: OpenStreetMap contributors. Crash data: FDOT, NHTSA FARS, Signal Four Analytics. Demographics: US Census Bureau ACS. Countermeasures: FHWA Proven Safety Countermeasures and CMF Clearinghouse.
+- Type: [Public Sans](https://public-sans.digital.gov/) (Public Sans Project Authors / USWDS) and [Libre Caslon Text](https://github.com/impallari/Libre-Caslon-Text) (Libre Caslon Text Project Authors), both under the SIL Open Font License 1.1 — license texts in `vendor/fonts/`.
 
 ## License
 
