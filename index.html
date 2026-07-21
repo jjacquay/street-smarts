@@ -741,32 +741,45 @@
     border-radius: 6px;
     pointer-events: none;
   }
-  /* Color key for the hero crash-injury heat map */
+  /* Color key for the hero crash + fatality heat map */
   .hero-map-key{
     position: absolute;
     bottom: 12px; left: 12px;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
     max-width: calc(100% - 24px);
     background: rgba(255,255,255,0.92);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 6px 10px;
+    padding: 7px 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     pointer-events: none;
   }
-  .hero-map-key-label{
+  .hero-map-key-caption{
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .hero-map-key-scale{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-map-key-label{
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--ink-soft);
     white-space: nowrap;
   }
   .hero-map-key-ramp{
     flex: 1 1 auto;
-    min-width: 56px;
+    min-width: 72px;
     height: 10px;
     border-radius: 5px;
     /* Matches heroHeatColor(): yellow -> orange -> red -> deep maroon */
@@ -778,10 +791,13 @@
   }
   @media (prefers-color-scheme: dark){
     .hero-map-key{ background: rgba(20,24,33,0.92); }
+    .hero-map-key-caption{ color: #fff; }
   }
   @media (max-width: 480px){
-    .hero-map-key{ gap: 6px; padding: 5px 8px; }
-    .hero-map-key-label{ font-size: 9.5px; }
+    .hero-map-key{ padding: 6px 8px; }
+    .hero-map-key-caption{ font-size: 9.5px; }
+    .hero-map-key-label{ font-size: 9px; }
+    .hero-map-key-ramp{ min-width: 60px; }
   }
   /* Homepage search result — the "nearest corridor + countermeasure" callout */
   .hero-result{
@@ -984,12 +1000,15 @@
       </div>
     </div>
     <div class="hero-map-wrap">
-      <div id="hero-map" class="hero-map" aria-label="Crash injury heat map of Escambia County"></div>
-      <div class="hero-map-badge">Crash injury heat map · 2018–2024</div>
-      <div class="hero-map-key" aria-label="Map color key: crash and injury intensity">
-        <span class="hero-map-key-label">Fewer</span>
-        <span class="hero-map-key-ramp" aria-hidden="true"></span>
-        <span class="hero-map-key-label">More crashes &amp; injuries</span>
+      <div id="hero-map" class="hero-map" aria-label="Heat map of crashes and fatalities in Escambia County"></div>
+      <div class="hero-map-badge">Heat map · crashes &amp; fatalities · 2018–2024</div>
+      <div class="hero-map-key" aria-label="Map color key: crash and fatality intensity">
+        <span class="hero-map-key-caption">Crashes &amp; fatalities</span>
+        <span class="hero-map-key-scale">
+          <span class="hero-map-key-label">Fewer</span>
+          <span class="hero-map-key-ramp" aria-hidden="true"></span>
+          <span class="hero-map-key-label">More</span>
+        </span>
       </div>
     </div>
   </div>
@@ -1367,9 +1386,9 @@
     tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     tileAttribution: '&copy; OpenStreetMap',
     tileMaxZoom: 18,
-    heroTileUrl: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    heroTileUrl: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
     heroTileAttribution: '&copy; OSM &copy; CARTO',
-    heroTileMaxZoom: 16,
+    heroTileMaxZoom: 19,
     geocodeBase: 'https://nominatim.openstreetmap.org/search',
     geocodeViewbox: '-87.70,30.20,-86.95,31.15',
   };
@@ -2132,7 +2151,8 @@
     }).setView([30.45, -87.23], 10);
     L.tileLayer(CONFIG.heroTileUrl, {
       maxZoom: CONFIG.heroTileMaxZoom,
-      attribution: CONFIG.heroTileAttribution
+      attribution: CONFIG.heroTileAttribution,
+      detectRetina: true,   // fetch @2x tiles on high-DPI screens for a crisper basemap
     }).addTo(state.heroMap);
     L.control.attribution({ position: 'bottomright', prefix: false }).addAttribution('OSM').addTo(state.heroMap);
   }
