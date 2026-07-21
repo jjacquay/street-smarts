@@ -4,8 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light dark" />
-<meta name="description" content="SaferStreets Simplified (Escambia MVP) — a plain-language street safety tool for residents, journalists, teachers, nonprofits, and city council members." />
-<title>SaferStreets Simplified — Escambia MVP</title>
+<meta name="description" content="Street Smarts (Escambia MVP) — a plain-language street safety tool for residents, journalists, teachers, nonprofits, and city council members." />
+<title>Street Smarts — Escambia MVP</title>
 <link rel="icon" type="image/png" href="assets/brand/favicon.png" />
 <link rel="apple-touch-icon" href="assets/brand/logo-mark.png" />
 
@@ -704,6 +704,15 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: 600;
+    /* Keep long words (e.g. COUNTERMEASURES) inside the card on narrow screens,
+       preferring a hyphenated break over an abrupt mid-word one */
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  @media (max-width: 480px){
+    .hero-stats{ gap: 8px; }
+    .hero-stat{ padding: 12px 10px 10px; }
+    .hero-stat .lbl{ font-size: 10px; letter-spacing: 0.03em; }
   }
   .hero-map-wrap{
     position: relative;
@@ -731,6 +740,48 @@
     padding: 6px 10px;
     border-radius: 6px;
     pointer-events: none;
+  }
+  /* Color key for the hero crash-injury heat map */
+  .hero-map-key{
+    position: absolute;
+    bottom: 12px; left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 24px);
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    pointer-events: none;
+  }
+  .hero-map-key-label{
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .hero-map-key-ramp{
+    flex: 1 1 auto;
+    min-width: 56px;
+    height: 10px;
+    border-radius: 5px;
+    /* Matches heroHeatColor(): yellow -> orange -> red -> deep maroon */
+    background: linear-gradient(90deg,
+      rgb(255,237,160) 0%,
+      rgb(254,178,76) 33%,
+      rgb(240,59,32) 66%,
+      rgb(122,0,18) 100%);
+  }
+  @media (prefers-color-scheme: dark){
+    .hero-map-key{ background: rgba(20,24,33,0.92); }
+  }
+  @media (max-width: 480px){
+    .hero-map-key{ gap: 6px; padding: 5px 8px; }
+    .hero-map-key-label{ font-size: 9.5px; }
   }
   /* Homepage search result — the "nearest corridor + countermeasure" callout */
   .hero-result{
@@ -889,10 +940,10 @@
           id="menu-toggle">
     <span aria-hidden="true">☰</span>
   </button>
-  <a class="brand" href="#overview" aria-label="SaferStreets Simplified, Escambia MVP home">
+  <a class="brand" href="#overview" aria-label="Street Smarts, Escambia MVP home">
     <img class="brand-logo" src="assets/brand/logo-mark.png" alt="" aria-hidden="true" width="38" height="38" />
     <span>
-      SaferStreets <small>Escambia · Plain-language MVP</small>
+      Street Smarts <small>Escambia · Plain-language MVP</small>
     </span>
   </a>
   <div class="topbar-spacer"></div>
@@ -928,13 +979,18 @@
         </div>
         <div class="hero-stat" role="listitem">
           <div class="num">31</div>
-          <div class="lbl">Proven countermeasures</div>
+          <div class="lbl">Proven counter&shy;measures</div>
         </div>
       </div>
     </div>
     <div class="hero-map-wrap">
       <div id="hero-map" class="hero-map" aria-label="Crash injury heat map of Escambia County"></div>
       <div class="hero-map-badge">Crash injury heat map · 2018–2024</div>
+      <div class="hero-map-key" aria-label="Map color key: crash and injury intensity">
+        <span class="hero-map-key-label">Fewer</span>
+        <span class="hero-map-key-ramp" aria-hidden="true"></span>
+        <span class="hero-map-key-label">More crashes &amp; injuries</span>
+      </div>
     </div>
   </div>
 </section>
@@ -963,7 +1019,7 @@
           <span class="qbadge">Why are we here?</span>
           <h1 id="overview-h">Make street safety understandable in plain language.</h1>
           <p class="lede">
-            SaferStreets Simplified helps city council members, nonprofits, journalists, teachers, and residents
+            Street Smarts helps city council members, nonprofits, journalists, teachers, and residents
             see where streets are most dangerous in Escambia County, what to do first, and how to explain
             those choices in everyday language.
           </p>
@@ -1219,7 +1275,7 @@
     </section>
 
     <footer class="muted" style="text-align:center; font-size: 13px; margin-top: 24px">
-      <img class="footer-logo" src="assets/brand/logo-lockup.png" alt="SaferStreets Simplified — Escambia" width="180" />
+      <img class="footer-logo" src="assets/brand/logo-lockup.png" alt="Street Smarts — Escambia" width="180" />
       <p style="margin:12px auto 0; max-width:70ch">Built on FDOT crash data (2018–2022, all severities) and NHTSA FARS fatals (2022–2024). A prioritization tool — cost and crash-reduction figures are planning estimates, not engineering quotes.</p>
       <details style="max-width:70ch; margin:12px auto 0; text-align:left">
         <summary style="cursor:pointer; min-height:var(--tap); display:flex; align-items:center; justify-content:center; gap:8px; font-weight:600"><span class="details-caret" aria-hidden="true">▸</span>About the data</summary>
@@ -1957,8 +2013,8 @@
       return;
     }
     const lines = [
-      'SaferStreets Simplified — Corridor Packet',
-      '=========================================',
+      'Street Smarts — Corridor Packet',
+      '===============================',
       'A public-information discussion starter — not a traffic engineering study,',
       'design, or professional recommendation.',
       '',
@@ -2044,12 +2100,12 @@
     lines.push('Florida SB 1614 (Mar 2023) creates a 60-day public-access privacy window; non-fatal 2023+ data');
     lines.push('is not yet public. CMF sources: FHWA Proven Safety Countermeasures, FHWA CMF Clearinghouse (3-5 star).');
     lines.push('');
-    lines.push('(Generated by SaferStreets Simplified — Escambia MVP)');
+    lines.push('(Generated by Street Smarts — Escambia MVP)');
     const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'saferstreets-' + c.id + '.txt';
+    a.download = 'street-smarts-' + c.id + '.txt';
     document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
   });
@@ -2093,11 +2149,16 @@
       .then(r => r.json())
       .then(gj => {
         let maxScore = 0;
+        // Score-weighted centroid so the initial view lands on the crash-dense
+        // urban core (Pensacola), not the whole rural county — "start zoomed in".
+        let sumW = 0, sumLat = 0, sumLon = 0;
         (gj.features || []).forEach(f => {
           const p = f.properties || {};
           // every crash counts; serious injuries and fatalities count much more
           p._score = (p.total || 0) + 3 * (p.serious || 0) + 8 * (p.fatal || 0);
           if (p._score > maxScore) maxScore = p._score;
+          const c = cellCenter(f.geometry);
+          if (c && p._score > 0){ sumW += p._score; sumLat += c[0] * p._score; sumLon += c[1] * p._score; }
         });
         const layer = L.geoJSON(gj, {
           style: f => ({
@@ -2108,9 +2169,32 @@
           interactive: false,
         });
         layer.addTo(state.heroMap);
-        try { state.heroMap.fitBounds(layer.getBounds(), { padding: [16, 16] }); } catch (e){}
+        if (sumW > 0){
+          state.heroMap.setView([sumLat / sumW, sumLon / sumW], 12);
+        } else {
+          try { state.heroMap.fitBounds(layer.getBounds(), { padding: [16, 16] }); } catch (e){}
+        }
       })
       .catch(err => { heroHeatDone = false; console.error('Hero heatmap load failed', err); });
+  }
+
+  // Bounding-box center [lat, lon] of a grid cell polygon, used to weight the
+  // hero map's opening view toward the densest crash areas.
+  function cellCenter(geom){
+    if (!geom) return null;
+    let ring = null;
+    if (geom.type === 'Polygon') ring = geom.coordinates[0];
+    else if (geom.type === 'MultiPolygon') ring = geom.coordinates[0] && geom.coordinates[0][0];
+    if (!ring || !ring.length) return null;
+    let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
+    for (const pt of ring){
+      const lon = pt[0], lat = pt[1];
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+      if (lon < minLon) minLon = lon;
+      if (lon > maxLon) maxLon = lon;
+    }
+    return [(minLat + maxLat) / 2, (minLon + maxLon) / 2];
   }
 
   // Yellow -> orange -> red -> deep maroon ramp for crash-injury intensity.
